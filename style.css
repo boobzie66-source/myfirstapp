@@ -1,0 +1,163 @@
+body {
+    min-height: 100vh;
+    margin: 0;
+    padding: 50px 20px;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #f4f4f4, #e6f0f7);
+    display: flex;
+    justify-content: center;
+    color: #202124;
+}
+
+.container {
+    background: white;
+    padding: 28px;
+    border-radius: 10px;
+    width: min(100%, 500px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+}
+
+input {
+    min-width: 0;
+    flex: 1;
+    padding: 11px;
+    border: 1px solid #d5dbe0;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+button {
+    padding: 8px;
+    background: #0078d4;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+form {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 28px;
+}
+
+.primary-button:hover {
+    background: #005a9e;
+}
+
+li {
+    margin-top: 10px;
+}
+
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+.intro,
+.eyebrow,
+.list-header h2,
+.empty-state {
+    margin-top: 0;
+}
+
+.eyebrow {
+    color: #0078d4;
+    font-size: 12px;
+    text-transform: uppercase;
+}
+
+.intro,
+#taskCount,
+.empty-state {
+    color: #666;
+}
+
+.list-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    border-bottom: 1px solid #ddd;
+}
+
+.toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 14px 0 4px;
+}
+
+.filters {
+    display: flex;
+    gap: 5px;
+}
+
+.filter-button,
+.clear-button {
+    padding: 6px 9px;
+    background: transparent;
+    color: #666;
+    font-size: 0.8rem;
+}
+
+.filter-button.active {
+    background: #e8f2fa;
+    color: #005a9e;
+}
+
+.clear-button:hover {
+    background: #fbecec;
+    color: #c00;
+}
+
+.task-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 11px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.task-item input[type="checkbox"] {
+    width: auto;
+}
+
+.task-text {
+    flex: 1;
+}
+
+.task-item.completed .task-text {
+    color: #777;
+    text-decoration: line-through;
+}
+
+.delete-button {
+    background: transparent;
+    color: #666;
+}
+
+.delete-button:hover {
+    color: #c00;
+}
+
+@media (max-width: 400px) {
+    body {
+        margin-top: 20px;
+        padding: 0 10px;
+    }
+
+    .container {
+        width: 100%;
+    }
+
+    .toolbar {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+}
