@@ -3,39 +3,59 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Prize Claw</title>
+	<title>Resume Studio</title>
 	<link rel="stylesheet" href="style.css">
 </head>
 <body>
-	<main class="machine" aria-labelledby="gameTitle">
-		<header class="topbar">
+	<main class="app-shell">
+		<header class="app-header">
 			<div>
-				<p class="eyebrow">Lucky drop arcade</p>
-				<h1 id="gameTitle">Prize Claw</h1>
+				<p class="eyebrow">Career toolkit</p>
+				<h1>Resume Studio</h1>
+				<p class="subtitle">Build a clear, confident resume in one sitting.</p>
 			</div>
-			<div class="score" aria-label="Prize score"><span id="score">0</span><small>WINS</small></div>
+			<button class="print-button" id="printResume" type="button">Print / Save PDF</button>
 		</header>
 
-		<section class="game-cabinet" aria-label="Claw machine game">
-			<div class="machine-top"><span></span><span></span><span></span></div>
-			<div class="playfield" id="playfield">
-				<div class="rail"></div>
-				<div class="claw" id="claw" aria-hidden="true"><div class="cable"></div><div class="grabber"><i></i><i></i><i></i></div></div>
-				<div class="prizes" id="prizes"></div>
-				<div class="floor"></div>
-			</div>
-			<div class="controls">
-				<div class="status" id="status" role="status">Pick a prize and make your drop.</div>
-				<div class="control-row">
-					<button class="arrow-button" id="leftButton" type="button" aria-label="Move claw left">&#8592;</button>
-					<button class="drop-button" id="dropButton" type="button">Drop claw</button>
-					<button class="arrow-button" id="rightButton" type="button" aria-label="Move claw right">&#8594;</button>
+		<div class="workspace">
+			<section class="editor" aria-labelledby="editorTitle">
+				<div class="section-heading"><span>01</span><h2 id="editorTitle">Your details</h2></div>
+				<div class="field-grid">
+					<label>Full name<input data-field="name" placeholder="Alex Morgan"></label>
+					<label>Job title<input data-field="title" placeholder="Product Designer"></label>
+					<label>Email<input data-field="email" type="email" placeholder="alex@example.com"></label>
+					<label>Phone<input data-field="phone" placeholder="(555) 123-4567"></label>
+					<label>Location<input data-field="location" placeholder="Austin, TX"></label>
+					<label>Website<input data-field="website" placeholder="alexmorgan.com"></label>
 				</div>
-			</div>
-		</section>
-		<p class="hint">Use the arrow keys to aim. Each drop costs one play.</p>
-	</main>
 
+				<div class="section-heading"><span>02</span><h2>Profile</h2></div>
+				<label>Professional summary<textarea data-field="summary" rows="4" placeholder="Write 2-3 sentences about your experience, strengths, and the value you bring."></textarea></label>
+
+				<div class="section-heading"><span>03</span><h2>Experience</h2></div>
+				<label>Most recent role<textarea data-field="experience" rows="6" placeholder="Senior Product Designer | Acme Inc. | 2022 - Present&#10;Led a design system used by 6 product teams...&#10;Improved activation by 28% through research-led onboarding."></textarea></label>
+
+				<div class="section-heading"><span>04</span><h2>Education & skills</h2></div>
+				<label>Education<textarea data-field="education" rows="3" placeholder="B.A. in Communication | State University | 2018"></textarea></label>
+				<label>Skills<input data-field="skills" placeholder="Product strategy, Figma, Research, Prototyping"></label>
+			</section>
+
+			<section class="preview-wrap" aria-labelledby="previewTitle">
+				<div class="preview-toolbar"><span id="previewTitle">Live preview</span><span class="autosave">Saved locally</span></div>
+				<article class="resume" id="resumePreview">
+					<header class="resume-header"><h2 data-preview="name">Alex Morgan</h2><p data-preview="title">Product Designer</p><div class="contact" data-preview="contact">alex@example.com  ·  (555) 123-4567  ·  Austin, TX</div></header>
+					<div class="resume-content">
+						<section data-section="summary"><h3>Profile</h3><p data-preview="summary">A thoughtful designer who turns complex problems into clear, useful experiences. Add your summary to make this section yours.</p></section>
+						<section data-section="experience"><h3>Experience</h3><div class="multiline" data-preview="experience">Senior Product Designer | Acme Inc. | 2022 - Present
+Led a design system used by 6 product teams.
+Improved activation by 28% through research-led onboarding.</div></section>
+						<section data-section="education"><h3>Education</h3><div class="multiline" data-preview="education">B.A. in Communication | State University | 2018</div></section>
+						<section data-section="skills"><h3>Skills</h3><p data-preview="skills">Product strategy, Figma, Research, Prototyping</p></section>
+					</div>
+				</article>
+			</section>
+		</div>
+	</main>
 	<script src="script.js"></script>
 </body>
 </html>

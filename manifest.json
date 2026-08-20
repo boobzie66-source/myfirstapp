@@ -1,13 +1,13 @@
 {
   "manifest_version": 3,
-  "name": "Prize Claw",
-  "description": "A playful claw-machine game that opens from your browser toolbar.",
+  "name": "Resume Studio",
+  "description": "A focused resume builder with a live preview and PDF export.",
   "version": "1.0.0",
   "permissions": [
     "storage"
   ],
   "action": {
-    "default_title": "Open Prize Claw",
+    "default_title": "Open Resume Studio",
     "default_popup": "index.html"
   }
 }

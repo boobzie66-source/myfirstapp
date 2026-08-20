@@ -1,98 +1,51 @@
+const fields = document.querySelectorAll('[data-field]');
+const storageKey = 'resumeStudioData';
 
-const claw = document.getElementById('claw');
-const prizesElement = document.getElementById('prizes');
-const status = document.getElementById('status');
-const scoreElement = document.getElementById('score');
-const dropButton = document.getElementById('dropButton');
-const playfield = document.getElementById('playfield');
-const prizeTypes = ['&#127912;', '&#127822;', '&#128142;', '&#127922;', '&#127872;', '&#129472;'];
-let clawPosition = 50;
-let score = 0;
-let isDropping = false;
+const defaults = {
+    name: 'Alex Morgan',
+    title: 'Product Designer',
+    email: 'alex@example.com',
+    phone: '(555) 123-4567',
+    location: 'Austin, TX',
+    website: '',
+    summary: '',
+    experience: '',
+    education: '',
+    skills: ''
+};
 
-function hasExtensionStorage() {
-    return typeof chrome !== 'undefined' && chrome.storage?.local;
+function formatText(value, fallback) {
+    return value.trim() || fallback;
 }
 
-function hasExtensionStorage() {
-    return typeof chrome !== 'undefined' && chrome.storage?.local;
+function updatePreview() {
+    const data = Object.fromEntries([...fields].map((field) => [field.dataset.field, field.value]));
+    const name = formatText(data.name, defaults.name);
+    const title = formatText(data.title, defaults.title);
+    const summary = formatText(data.summary, 'A thoughtful professional who turns complex problems into clear, useful results. Add your summary to make this section yours.');
+    const experience = formatText(data.experience, 'Your recent role and accomplishments will appear here.');
+    const education = formatText(data.education, 'Your education will appear here.');
+    const skills = formatText(data.skills, 'Your skills will appear here.');
+    const contact = [data.email, data.phone, data.location, data.website].filter(Boolean).join('  ·  ');
+
+    document.querySelector('[data-preview="name"]').textContent = name;
+    document.querySelector('[data-preview="title"]').textContent = title;
+    document.querySelector('[data-preview="contact"]').textContent = contact || 'email@example.com  ·  (555) 123-4567  ·  City, State';
+    document.querySelector('[data-preview="summary"]').textContent = summary;
+    document.querySelector('[data-preview="experience"]').textContent = experience;
+    document.querySelector('[data-preview="education"]').textContent = education;
+    document.querySelector('[data-preview="skills"]').textContent = skills;
+    localStorage.setItem(storageKey, JSON.stringify(data));
 }
 
-function saveScore() {
-    if (hasExtensionStorage()) {
-        chrome.storage.local.set({ clawScore: score });
-        return;
-    }
-
-    localStorage.setItem('clawScore', score.toString());
+function loadSavedData() {
+    let saved = {};
+    try { saved = JSON.parse(localStorage.getItem(storageKey) || '{}'); } catch { saved = {}; }
+    fields.forEach((field) => { field.value = saved[field.dataset.field] || ''; });
 }
 
-function loadScore() {
-    if (hasExtensionStorage()) {
-        chrome.storage.local.get({ clawScore: 0 }, (data) => {
-            score = Number(data.clawScore) || 0;
-            scoreElement.textContent = score;
-        });
-        return;
-    }
-
-    score = Number(localStorage.getItem('clawScore')) || 0;
-    scoreElement.textContent = score;
-}
-
-function createPrizes() {
-    prizesElement.replaceChildren();
-    prizeTypes.forEach((prize, index) => {
-        const item = document.createElement('span');
-        item.className = `prize prize-${index + 1}`;
-        item.innerHTML = prize;
-        prizesElement.appendChild(item);
-    });
-}
-
-function moveClaw(amount) {
-    if (isDropping) return;
-    clawPosition = Math.max(15, Math.min(85, clawPosition + amount));
-    claw.style.left = `${clawPosition}%`;
-    status.textContent = `Claw position: ${Math.round(clawPosition)}%`;
-}
-
-function dropClaw() {
-    if (isDropping) return;
-    isDropping = true;
-    dropButton.disabled = true;
-    status.textContent = 'Dropping...';
-    claw.classList.add('dropping');
-
-    window.setTimeout(() => {
-        const prizeHit = Math.abs(clawPosition - 50) < 18;
-        if (prizeHit) {
-            score += 1;
-            scoreElement.textContent = score;
-            saveScore();
-            status.textContent = 'Jackpot! You caught a prize.';
-            claw.classList.add('winner');
-        } else {
-            status.textContent = 'So close! Move the claw and try again.';
-        }
-    }, 850);
-
-    window.setTimeout(() => {
-        claw.classList.remove('dropping', 'winner');
-        isDropping = false;
-        dropButton.disabled = false;
-    }, 1900);
-}
-
-document.getElementById('leftButton').addEventListener('click', () => moveClaw(-10));
-document.getElementById('rightButton').addEventListener('click', () => moveClaw(10));
-dropButton.addEventListener('click', dropClaw);
-document.addEventListener('keydown', (event) => {
-    if (event.key === 'ArrowLeft') moveClaw(-10);
-    if (event.key === 'ArrowRight') moveClaw(10);
-    if (event.key === ' ') dropClaw();
-});
-
-createPrizes();
-loadScore();
+fields.forEach((field) => field.addEventListener('input', updatePreview));
+document.getElementById('printResume').addEventListener('click', () => window.print());
+loadSavedData();
+updatePreview();
 

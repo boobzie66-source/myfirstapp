@@ -1,6 +1,6 @@
-# Prize Claw
+# Resume Studio
 
-A small browser extension game where you aim a claw and grab prizes.
+A focused resume builder with a live preview and PDF export.
 
 ## Install in Chrome or Edge
 
