@@ -1,104 +1,98 @@
 
-const taskForm = document.getElementById('taskForm');
-const input = document.getElementById('taskInput');
-const taskList = document.getElementById('taskList');
-const taskCount = document.getElementById('taskCount');
-const emptyState = document.getElementById('emptyState');
-const clearCompleted = document.getElementById('clearCompleted');
-const filterButtons = document.querySelectorAll('[data-filter]');
+const claw = document.getElementById('claw');
+const prizesElement = document.getElementById('prizes');
+const status = document.getElementById('status');
+const scoreElement = document.getElementById('score');
+const dropButton = document.getElementById('dropButton');
+const playfield = document.getElementById('playfield');
+const prizeTypes = ['&#127912;', '&#127822;', '&#128142;', '&#127922;', '&#127872;', '&#129472;'];
+let clawPosition = 50;
+let score = 0;
+let isDropping = false;
 
-let tasks = JSON.parse(localStorage.getItem('todoTasks') || '[]');
-let currentFilter = 'all';
-
-function saveTasks() {
-    localStorage.setItem('todoTasks', JSON.stringify(tasks));
+function hasExtensionStorage() {
+    return typeof chrome !== 'undefined' && chrome.storage?.local;
 }
 
-function updateTaskSummary() {
-    const count = tasks.filter((task) => !task.completed).length;
-    taskCount.textContent = `${count} ${count === 1 ? 'task' : 'tasks'} left`;
+function hasExtensionStorage() {
+    return typeof chrome !== 'undefined' && chrome.storage?.local;
 }
 
-function renderTasks() {
-    taskList.replaceChildren();
+function saveScore() {
+    if (hasExtensionStorage()) {
+        chrome.storage.local.set({ clawScore: score });
+        return;
+    }
 
-    const visibleTasks = tasks.filter((task) => {
-        if (currentFilter === 'active') return !task.completed;
-        if (currentFilter === 'completed') return task.completed;
-        return true;
-    });
+    localStorage.setItem('clawScore', score.toString());
+}
 
-    visibleTasks.forEach((task) => {
-        const item = document.createElement('li');
-        item.className = `task-item${task.completed ? ' completed' : ''}`;
-
-        const checkbox = document.createElement('input');
-        checkbox.type = 'checkbox';
-        checkbox.checked = task.completed;
-        checkbox.setAttribute('aria-label', `Mark ${task.text} complete`);
-        checkbox.addEventListener('change', () => {
-            task.completed = checkbox.checked;
-            saveTasks();
-            renderTasks();
+function loadScore() {
+    if (hasExtensionStorage()) {
+        chrome.storage.local.get({ clawScore: 0 }, (data) => {
+            score = Number(data.clawScore) || 0;
+            scoreElement.textContent = score;
         });
+        return;
+    }
 
-        const text = document.createElement('span');
-        text.className = 'task-text';
-        text.textContent = task.text;
-
-        const deleteButton = document.createElement('button');
-        deleteButton.className = 'delete-button';
-        deleteButton.type = 'button';
-        deleteButton.textContent = 'Delete';
-        deleteButton.addEventListener('click', () => {
-            tasks = tasks.filter((candidate) => candidate.id !== task.id);
-            saveTasks();
-            renderTasks();
-        });
-
-        item.append(checkbox, text, deleteButton);
-        taskList.appendChild(item);
-    });
-
-    emptyState.hidden = visibleTasks.length > 0;
-    updateTaskSummary();
+    score = Number(localStorage.getItem('clawScore')) || 0;
+    scoreElement.textContent = score;
 }
 
-function addTask() {
-    const task = input.value.trim();
-
-    if (task === '') return;
-
-    tasks.push({
-        id: Date.now().toString(),
-        text: task,
-        completed: false
+function createPrizes() {
+    prizesElement.replaceChildren();
+    prizeTypes.forEach((prize, index) => {
+        const item = document.createElement('span');
+        item.className = `prize prize-${index + 1}`;
+        item.innerHTML = prize;
+        prizesElement.appendChild(item);
     });
-    saveTasks();
-    renderTasks();
-    input.value = '';
-    input.focus();
 }
 
-taskForm.addEventListener('submit', (event) => {
-    event.preventDefault();
-    addTask();
+function moveClaw(amount) {
+    if (isDropping) return;
+    clawPosition = Math.max(15, Math.min(85, clawPosition + amount));
+    claw.style.left = `${clawPosition}%`;
+    status.textContent = `Claw position: ${Math.round(clawPosition)}%`;
+}
+
+function dropClaw() {
+    if (isDropping) return;
+    isDropping = true;
+    dropButton.disabled = true;
+    status.textContent = 'Dropping...';
+    claw.classList.add('dropping');
+
+    window.setTimeout(() => {
+        const prizeHit = Math.abs(clawPosition - 50) < 18;
+        if (prizeHit) {
+            score += 1;
+            scoreElement.textContent = score;
+            saveScore();
+            status.textContent = 'Jackpot! You caught a prize.';
+            claw.classList.add('winner');
+        } else {
+            status.textContent = 'So close! Move the claw and try again.';
+        }
+    }, 850);
+
+    window.setTimeout(() => {
+        claw.classList.remove('dropping', 'winner');
+        isDropping = false;
+        dropButton.disabled = false;
+    }, 1900);
+}
+
+document.getElementById('leftButton').addEventListener('click', () => moveClaw(-10));
+document.getElementById('rightButton').addEventListener('click', () => moveClaw(10));
+dropButton.addEventListener('click', dropClaw);
+document.addEventListener('keydown', (event) => {
+    if (event.key === 'ArrowLeft') moveClaw(-10);
+    if (event.key === 'ArrowRight') moveClaw(10);
+    if (event.key === ' ') dropClaw();
 });
 
-filterButtons.forEach((button) => {
-    button.addEventListener('click', () => {
-        currentFilter = button.dataset.filter;
-        filterButtons.forEach((filterButton) => filterButton.classList.remove('active'));
-        button.classList.add('active');
-        renderTasks();
-    });
-});
-
-clearCompleted.addEventListener('click', () => {
-    tasks = tasks.filter((task) => !task.completed);
-    saveTasks();
-    renderTasks();
-});
-
-renderTasks();
+createPrizes();
+loadScore();
 

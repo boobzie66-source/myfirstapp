@@ -1,0 +1,13 @@
+{
+  "manifest_version": 3,
+  "name": "Prize Claw",
+  "description": "A playful claw-machine game that opens from your browser toolbar.",
+  "version": "1.0.0",
+  "permissions": [
+    "storage"
+  ],
+  "action": {
+    "default_title": "Open Prize Claw",
+    "default_popup": "index.html"
+  }
+}
